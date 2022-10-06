@@ -17,9 +17,10 @@
       </q-item>
       <q-separator />
       <q-img src="Touka.jpg" />
+
       <q-card-section>
         <div class="text-h6">Mine :)</div>
-        <div class="text-subtitle">by Ken Kaneki</div>
+        <div class="text-caption">October 6 15:18</div>
       </q-card-section>
     </q-card>
   </q-page>
