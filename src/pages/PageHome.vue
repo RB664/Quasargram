@@ -1,6 +1,6 @@
 <template>
   <q-page class="constrain q-pa-md">
-    <q-card class="card-post" flat bordered>
+    <q-card class="card-post q-p-mb-md" v-for="post in posts" :key="post.id" flat bordered>
       <q-item>
         <q-item-section avatar>
           <q-avatar>
@@ -16,19 +16,52 @@
         </q-item-section>
       </q-item>
       <q-separator />
-      <q-img src="Touka.jpg" />
+      <q-img :src="post.imageUrl" />
 
       <q-card-section>
-        <div class="text-h6">Mine :)</div>
-        <div class="text-caption">October 6 15:18</div>
+        <div class="text-h6">{{post.caption}}</div>
+        <div class="text-caption">{{post.date | niceDate()}}</div>
       </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script>
+  import {date} from 'quasar'
 export default {
-  name: 'PageHome'
+  name: 'PageHome',
+  data() {
+    return {
+      posts: [
+        {
+          id: 1,
+          caption: 'Mine :)',
+          date: 1665064097293,
+          location: 'Japan',
+          imageUrl: 'Touka.jpg'
+        },
+        {
+          id: 2,
+          caption: 'Mine :)',
+          date: 1665064097293,
+          location: 'Japan',
+          imageUrl: 'Eru Chitanda.webp'
+        },
+        {
+          id: 3,
+          caption: 'Mine :)',
+          date: 1665064097293,
+          location: 'Japan',
+          imageUrl: 'Lucy Heartfilia.webp'
+        }
+      ]
+    }
+  },
+  filters: {
+    niceDate(value){
+      return date.formatDate(value, 'YYY-MM-DDTH:mm:ss,SSSZ')
+    }
+  }
 }
 </script>
 
