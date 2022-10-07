@@ -22,7 +22,7 @@
         v-else
         @input="captureImageFallback"
         accept="image/*"
-        v-model="imageCaptured"
+        v-model="imageUpload"
         label="Choose an image"
         outlined
       >
@@ -46,7 +46,7 @@
           dense
         >
           <template v-slot:append>
-            <q-btn round dense flat icon="eva-navigation-2-outline" />
+            <q-btn @click="getLocation" round dense flat icon="eva-navigation-2-outline" />
           </template>
         </q-input>
       </div>
@@ -98,6 +98,7 @@ export default {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       this.imageCaptured = true;
       this.post.photo = this.dataURItoBlob(canvas.toDataURL());
+      this.disableCamera()
     },
     captureImageFallback(file) {
       this.post.photo = file;
@@ -118,6 +119,11 @@ export default {
       };
       reader.readAsDataURL(file);
     },
+    disableCamera(){
+      this.$refs.video.srcObject.getVideoTracks().forEach(track => {
+        track.stop()
+      })
+    },
     dataURItoBlob(dataURI) {
       // convert base64 to raw binary data held in a string
       // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
@@ -136,10 +142,31 @@ export default {
       var blob = new Blob([ab], { type: mimeString });
       return blob;
     },
+    getLocation() {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.getCityAndCountry(position)
+      }, err => {
+        console.log('err:', err)
+      }, { timeout: 7000 })
+    },
+    getCityAndCountry(position) {
+      let apiUrl = `https://geocode.xyz/${ position.coords.latitude },${ position.coords.longitude }?json=1`
+      this.$axios.get(apiUrl).then(result => {
+        console.log('result:', result => {
+        }).catch(err => {
+          console.log('err:', err)
+        })
+      })
+    }
   },
   mounted() {
     this.initCamera();
   },
+  beforeDestroy() {
+    if (this.hasCameraSupport) {
+      this.disableCamera()
+    }
+  }
 };
 </script>
 
