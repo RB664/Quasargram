@@ -1,6 +1,8 @@
 <template>
   <q-page class="constrain q-pa-md">
-    <q-card class="card-post q-p-mb-md" v-for="post in posts" :key="post.id" flat bordered>
+    <div class="row q-col-gutter-lg">
+      <div class="col-12 col-sm-8">
+        <q-card class="card-post q-p-mb-md" v-for="post in posts" :key="post.id" flat bordered>
       <q-item>
         <q-item-section avatar>
           <q-avatar>
@@ -23,6 +25,25 @@
         <div class="text-caption">{{post.date | niceDate()}}</div>
       </q-card-section>
     </q-card>
+      </div>
+      <div class="col-4 large-screen-only">
+        <q-item>
+        <q-item-section avatar>
+          <q-avatar>
+            <img src="Ken Kaneki.jpg">
+          </q-avatar>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label class="text-bold">Ken Kaneki</q-item-label>
+          <q-item-label caption>
+            Japan
+          </q-item-label>
+        </q-item-section>
+        </q-item>
+      </div>
+    </div>
+
   </q-page>
 </template>
 
@@ -59,7 +80,7 @@ export default {
   },
   filters: {
     niceDate(value){
-      return date.formatDate(value, 'YYY-MM-DDTH:mm:ss,SSSZ')
+      return date.formatDate(value, 'MMMM D h:mmA')
     }
   }
 }
