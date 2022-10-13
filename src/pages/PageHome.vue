@@ -100,7 +100,7 @@ export default {
         }).catch((err) => {
         this.$q.dialog({
           title: "Error",
-          message: "Could not find your location",
+          message: "Could not find your posts",
         });
       this.LoadingPosts = false.
         this.LoadingPosts = false;

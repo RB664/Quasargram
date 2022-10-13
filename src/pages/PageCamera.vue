@@ -195,8 +195,15 @@ export default {
      formData.append('location',this.post.location)
      formData.append('date',this.post.date)
      formData.append('file',this.post.photo, this.post.id + '.png')
+     console.log(formData)
 
-    this.$axios.post(`${ process.env. }API`)
+    this.$axios.post(`${ process.env.API }/createPost`, formData).then
+      (res => {
+        console.log('res', res)
+      }).catch(err => {
+        console.log('err', err)
+      })
+
     }
   },
   mounted() {
