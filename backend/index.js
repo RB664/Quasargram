@@ -9,8 +9,10 @@ let busboy = require("busboy");
 let path = require("path")
 let os = require("os")
 let fs = require("fs")
-let UUID = require("uuid-v4")
-
+const { v4: uuidv4 } = require('uuid');
+// const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+// const {getStorage} = require('firebase-admin/storage')
 /*
 config - express
 */
@@ -27,16 +29,37 @@ app.use((req, res, next) => {
   config - firebase
 */
 
-const serviceAccount = require("./serviceAccount.json");
+// const serviceAccount = require("./serviceAccount.json");
 // const busboy = require("busboy");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: "gs://quasargram-44245.appspot.com"
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   storageBucket: "gs://quasargram-44245.appspot.com"
+// });
+
+// const db = getFirestore();
+// const serviceAccount = require('./path/to/serviceAccountKey.json');
+
+// initializeApp({
+//   credential: cert(serviceAccount),
+//   storageBucket: 'quasargram-44245.appspot.com'
+// });
+
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getStorage } = require('firebase-admin/storage');
+
+const serviceAccount = require('./serviceAccount.json');
+
+initializeApp({
+  credential: cert(serviceAccount),
+  storageBucket: 'quasargram-44245.appspot.com'
 });
 
-const db = admin.firestore();
-let bucket = admin.storage().bucket();
+const bucket = getStorage().bucket();
+
+
+// let bucket = getStorage().bucket();
+const db = getFirestore();
 
 /*
 endpoint - posts
@@ -60,7 +83,7 @@ app.post("/createPost", (req, res) => {
   console.log("POST request");
   let fields = {}
   let fileData = {}
-  let uuid = UUID()
+  let uuid = uuidv4()
   const bb = busboy({ headers: req.headers });
 
   bb.on("file", (name, file, info) => {
@@ -120,10 +143,10 @@ app.post("/createPost", (req, res) => {
         })
       }
     console.log("Sent the thing")
-    // res.send("Done parsing form!");
-    // console.log("Done parsing form!");
-    // res.writeHead(303, { Connection: "close", Location: "/" });
-    // res.end();
+    res.send("Done parsing form!");
+    console.log("Done parsing form!");
+    res.writeHead(303, { Connection: "close", Location: "/" });
+    res.end();
   });
   req.pipe(bb);
 });

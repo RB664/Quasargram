@@ -102,12 +102,11 @@ export default {
           title: "Error",
           message: "Could not find your posts",
         });
-      this.LoadingPosts = false.
-        this.LoadingPosts = false;
-      });
-    },
+        this.LoadingPosts = false
+    });
   },
-  filters: {
+},
+filters: {
     niceDate(value) {
       return date.formatDate(value, "MMMM D h:mmA");
     },
