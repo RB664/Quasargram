@@ -10,9 +10,7 @@ let path = require("path")
 let os = require("os")
 let fs = require("fs")
 const { v4: uuidv4 } = require('uuid');
-// const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
-// const {getStorage} = require('firebase-admin/storage')
 /*
 config - express
 */
@@ -29,22 +27,6 @@ app.use((req, res, next) => {
   config - firebase
 */
 
-// const serviceAccount = require("./serviceAccount.json");
-// const busboy = require("busboy");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   storageBucket: "gs://quasargram-44245.appspot.com"
-// });
-
-// const db = getFirestore();
-// const serviceAccount = require('./path/to/serviceAccountKey.json');
-
-// initializeApp({
-//   credential: cert(serviceAccount),
-//   storageBucket: 'quasargram-44245.appspot.com'
-// });
-
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getStorage } = require('firebase-admin/storage');
 
@@ -57,8 +39,6 @@ initializeApp({
 
 const bucket = getStorage().bucket();
 
-
-// let bucket = getStorage().bucket();
 const db = getFirestore();
 
 /*
@@ -89,30 +69,25 @@ app.post("/createPost", (req, res) => {
   bb.on("file", (name, file, info) => {
     const { filename, encoding, mimeType } = info;
 
-    // console.log(
-    //   `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
-    //   filename,
-    //   encoding,
-    //   mimeType
-    // );
-    file
-      .on("data", (data) => {
-        console.log(`File [${name}] got ${data.length} bytes`);
-      })
-      .on("close", () => {
-        console.log(`File [${name}] done`);
-      });
+    // file
+    //   .on("data", (data) => {
+    //     console.log(`File [${name}] got ${data.length} bytes`);
+    //   })
+    //   .on("close", () => {
+    //     console.log(`File [${name}] done`);
+    //   });
       //
       let filepath = path.join(os.tmpdir(), filename)
       file.pipe(fs.createWriteStream(filepath))
       fileData = { filepath, mimeType }
   });
 
-  bb.on("field", (name, val, info, fieldname) => {
+  bb.on("field", (name, val, info) => {
     fields[name] = val
   });
   bb.on("close", function() {
-    // console.log(fields)
+    console.log('fields', fields)
+    console.log(fileData)
 
     bucket.upload(
       fileData.filepath,{
@@ -132,6 +107,7 @@ app.post("/createPost", (req, res) => {
     )
 
       function createDocument(uploadedFile){
+        console.log(uploadedFile)
         db.collection('posts').doc(fields.id).set({
           id: fields.id,
           caption: fields.caption,
@@ -139,14 +115,14 @@ app.post("/createPost", (req, res) => {
           date: parseInt(fields.date),
           imageUrl: `https://firebasestorage.googleapis.com/v0/b/${ bucket.name }/o/${ uploadedFile.name }?alt=media&token=${ uuid }`
         }).then(() => {
-          res.send('Post added:' + fields.id)
+        console.log(`Post added:` + fields.id)
         })
       }
-    console.log("Sent the thing")
-    res.send("Done parsing form!");
-    console.log("Done parsing form!");
-    res.writeHead(303, { Connection: "close", Location: "/" });
-    res.end();
+    // console.log("Sent the thing")
+    // res.send("Done parsing form!");
+    // console.log("Done parsing form!");
+    // res.writeHead(303, { Connection: "close", Location: "/" });
+    // res.end();
   });
   req.pipe(bb);
 });
